@@ -1,6 +1,7 @@
-const express = require('express')
-const shortenRoute = require
-require('dotev').config()
+import express from 'express'
+import shortenRoute from './routes/shortenRoute.js'
+import getUrlRoute from './routes/getUrlRoute.js'
+import 'dotenv/config'
 
 const app = express();
 
@@ -10,4 +11,4 @@ const PORT = process.env.PORT || 4000;
 app.use('/create', shortenRoute)
 app.use('/', getUrlRoute)
 
-app.listen(PORT, () => { console.log(`listening on port : ${PORT}$`) })
+app.listen(PORT, () => { console.log(`listening on port : ${PORT} `) })
