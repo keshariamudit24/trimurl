@@ -11,5 +11,4 @@ model Url {
   id          Int       @id @default(autoincrement())
   longUrl     String
   shortUrl    String
-  alias       Boolean
 }
