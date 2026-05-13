@@ -9,10 +9,11 @@ const client = new PrismaClient()
 async function lookup(key, value){
     const url = await client.Url.findFirst({
         where: {
-            key: value
+            [key]: value
         }
     })
-    if(url) return 1
+    // console.log(url)
+    if(url) return url
     return 0
 }
 
@@ -23,6 +24,7 @@ async function create(long, short){
             shortUrl: short
         }
     })
+    // console.log(newUrl)
     return newUrl.id
 }
 
@@ -31,43 +33,46 @@ const table = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 
 shortenRoute.post('/', expressAsyncHandler(async (req, res) => {
     const { longurl, alias } = req.body
 
-    if(lookup(longUrl, longurl)){
-        res.body.json({ msg: "url already exists, go to : " + url.shortUrl })
+    const val = await lookup("longUrl", longurl)
+    if(val){
+        return res.json({ msg: "url already exists, go to " + val.shortUrl })
     }
 
     if(alias != ""){
 
-        if(lookup(shortUrl, alias)){
-            res.body.json({ msg: "url already exists, go to : " + url.shortUrl })
+        const val = await lookup("shortUrl", alias)
+        if(val){
+            return res.json({ msg: "url already exists, go to : " + val.shortUrl })
         }
 
-        create(longurl, alias)
-        res.status(200).json({ msg: "url created successfully" })
+        await create(longurl, alias)
+        return res.status(200).json({ msg: "url created successfully" })
     }
     else{ 
-        id = create(longurl, alias) 
-        secret_key = process.env.SECRET_KEY
-        id = id ^ secret_key
+        let id = await create(longurl, alias) 
+        const temp = id
+        const secret_key = process.env.SECRET_KEY
+        id = id ^ Number(secret_key)
         // base-62 encoding 
-        num = id
-        str = "";
+        let num = id
+        let str = "";
         while(num > 0){
-            rem = num % 62
+            const rem = num % 62
             str += table[rem]
-            num /= 62
+            num = Math.floor(num / 62)
         }
         const hash = str.split("").reverse().join("");
         // update
         const storeHash = await client.Url.update({
             where: {
-                longUrl: longurl
+                id: temp
             },
             data: {
                 shortUrl: hash
             }
         })
         
-        res.status(200).json({ msg: "Url has been shortened", hash: hash })
+        return res.status(200).json({ msg: "Url has been shortened", hash: hash })
     }
 }))
 
