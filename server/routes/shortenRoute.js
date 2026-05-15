@@ -63,7 +63,7 @@ shortenRoute.post('/', expressAsyncHandler(async (req, res) => {
         }
         const hash = str.split("").reverse().join("");
         // update
-        const storeHash = await client.Url.update({
+        await client.Url.update({
             where: {
                 id: temp
             },

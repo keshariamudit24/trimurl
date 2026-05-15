@@ -9,6 +9,6 @@ app.use(express.json())
 const PORT = process.env.PORT || 4000;
 
 app.use('/create', shortenRoute)
-app.use('/:id', getUrlRoute)
+app.use('/', getUrlRoute)
 
 app.listen(PORT, () => { console.log(`listening on port : ${PORT} `) })
