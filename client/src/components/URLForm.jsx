@@ -3,7 +3,10 @@ import './URLForm.css'
 
 export default function URLForm({ onUrlShortened }) {
   const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/$/, '')
-  const publicBaseUrl = (import.meta.env.VITE_PUBLIC_BASE_URL || apiBaseUrl).replace(/\/$/, '')
+  const publicBaseUrl = (
+    import.meta.env.VITE_PUBLIC_BASE_URL ||
+    (import.meta.env.PROD ? window.location.origin : apiBaseUrl)
+  ).replace(/\/$/, '')
   const [longUrl, setLongUrl] = useState('')
   const [customAlias, setCustomAlias] = useState('')
   const [loading, setLoading] = useState(false)
