@@ -9,7 +9,7 @@ const client = new PrismaClient()
 getUrlRoute.get('/:id', expressAsyncHandler(async (req, res) => {
     const id = req.params.id
     const hash = String(id)
-    const data = await client.url.findFirst({
+    const data = await client.Url.findFirst({
         where: {
             shortUrl: hash
         }
